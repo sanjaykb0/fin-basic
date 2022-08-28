@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+main {
+    @apply flex;
+    @apply flex-col;
+    @apply items-center;
+    @apply m-4;
+}
+
+input {
+    @apply outline-none;
+}
+
+input:focus {
+    @apply border-blue-600;
+}
+
+.tag {
+    @apply px-2;
+    @apply border-blue-400;
+    @apply border-2;
+    @apply rounded-lg;
+    @apply text-blue-400;
+}
+
+.tags {
+    @apply flex;
+    @apply gap-2;
+}
+
