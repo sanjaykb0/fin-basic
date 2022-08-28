@@ -11,8 +11,8 @@
         <a href="/database">Statistics</a>
     </nav>
   </div>
-  <hr />
 </header>
+<hr>
 
 
 <slot><!-- optional fallback --></slot>
@@ -21,6 +21,11 @@
 
     .title {
         @apply text-5xl;
+    }
+
+    header {
+        @apply flex;
+        @apply justify-center;
     }
 
     .container {

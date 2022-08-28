@@ -1,9 +1,10 @@
 <script>
     import cfg from "./firebaseConfig";
     import { initializeApp } from "firebase/app";
-    import { collection, getDocs, getFirestore } from "firebase/firestore";
+    import { collection, orderBy, getDocs, query, getFirestore, onSnapshot } from "firebase/firestore";
     const app = initializeApp(cfg);
     const db = getFirestore(app);
+
 
 
     $: inputValue = "";
@@ -33,11 +34,12 @@
         // @ts-ignore
         let res = [];
         try {
-            const querySnapshot = await getDocs(collection(db, "records"));
+            const col= collection(db, "records")
+            const querySnapshot = await getDocs(query(col, orderBy("dateCreated", "desc")));
             querySnapshot.forEach(doc => {
                 res.push(doc.data());
-            });
-            // @ts-ignore
+            })
+           // @ts-ignore
             return Promise.resolve(res);
         } catch (e) {
             return Promise.reject("Cannot access data!");
@@ -71,37 +73,54 @@
         updateAggregateSum();
     }
 
-
 </script>
 
 <main>
    {#await tmp}
     <div class="text-3xl">Loading data...</div>
    {:then}
-        <div class="container">
-            <input type="text" placeholder="SORT BY TAG"  bind:value={inputValue} on:input={() => handleInput(inputValue.toLowerCase())}>
-        </div>
-        <div class="container">
-            <div class="text-xl">{aggregateSum}</div>
-        </div>
-        <div class="container">
+    <div class="grid-container">
+        <div class="container col-start-1 col-span-2">
             {#each displayData as dataObject}
-                <div>{dataObject.title}</div>
-                <div>{dataObject.amount}</div>
-                {#each dataObject.tags as tag}
-                    <div>{tag}</div>
-                {/each}
+            <div class="amount">{dataObject.amount.toLocaleString('en-US')}</div>
+                <div class="expenseData">
+                    <div class="title">{dataObject.title}</div>
+                    {#each dataObject.tags as tag}
+                    <div class="tag">{tag}</div>
+                    {/each}
+                </div>
                 <hr>
             {/each}
         </div>
+        <div class="container items-end col-start-3 col-span-4 fixed max-w-fit justify-self-end">
+            <div class="text-5xl">Total: {aggregateSum.toLocaleString('en-US')}</div>
+            <input type="text" placeholder="SORT BY TAG"  bind:value={inputValue} on:input={() => handleInput(inputValue.toLowerCase())}>
+        </div>
+    </div>
     {/await}
 </main>
 <style>
+    .grid-container {
+        @apply grid;
+        @apply grid-cols-5;
+        @apply max-w-screen-lg;
+        min-width: 1024px;
+    }
     .container {
         @apply flex;
         @apply flex-col;
-        @apply gap-4;
+        @apply gap-2;
     }
+
+    .expenseData {
+        @apply flex;
+        @apply gap-2;
+    }
+
+    .amount {
+        @apply text-4xl;
+    }
+
 
     .info {
         @apply flex;
