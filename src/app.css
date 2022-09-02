@@ -1,32 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+* {
+    @apply font-work;
+}
+
+.vcontainer {
+    @apply flex;
+    @apply flex-col;
+    @apply gap-2;
+    @apply items-center;
+    @apply w-fit;
+}
+
+.hcontainer {
+    @apply flex;
+    @apply items-center;
+    @apply gap-2;
+    @apply w-fit;
+}
+
 main {
+    @apply max-w-screen-xl;
     @apply flex;
     @apply flex-col;
     @apply items-center;
-    @apply m-4;
+    @apply mt-16;
+}
+
+header {
+    @apply text-gray-100;
+    @apply bg-gray-900;
+    @apply fixed;
+    @apply w-screen;
+    @apply p-2;
+    @apply px-8;
+    @apply h-16;
+    @apply flex;
+    @apply justify-between;
+    @apply items-center;
+}
+
+
+.logo {
+    @apply text-5xl;
+}
+
+.wrapper {
+    @apply w-screen;
+    @apply flex;
+    @apply flex-col;
+    @apply items-center;
 }
 
 input {
+    @apply w-full;
+}
+
+.form-input {
+    @apply flex;
+    @apply text-4xl;
+    @apply p-4;
+    @apply border-b-2;
     @apply outline-none;
 }
 
-input:focus {
-    @apply border-blue-600;
+.tag-input {
+    @apply flex;
+    @apply text-xl;
+    @apply p-4;
+    @apply outline-none;
 }
 
-.tag {
-    @apply px-2;
-    @apply border-blue-400;
+.tag-selection {
     @apply border-2;
     @apply rounded-lg;
-    @apply text-blue-400;
+    @apply px-2;
+    @apply cursor-pointer;
+    @apply w-fit;
 }
-
-.tags {
-    @apply flex;
-    @apply gap-2;
-}
-

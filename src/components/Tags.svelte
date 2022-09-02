@@ -69,68 +69,36 @@
 
 </script>
 
-<div class="container">
-    <div class="tag-container">
-        <div class="tags">
+<div class="vcontainer bad-fix">
+    <div class="hcontainer bad-fix">
+        <div class="hcontainer w-full">
             {#each tags as tag}
-                <div class="tag" on:click={() => removeTag(tag)}>
+                <div class="tag-selection border-green-600 hover:border-red-600" on:click={() => removeTag(tag)}>
                     {tag}
                 </div>
             {/each}
         </div>
 
         <form on:submit|preventDefault={handleAddTag}>
-            <input type="text" name="fish" on:focus|once={() => openDrawer = true} on:input={handleInput} bind:value={inputValue} placeholder={inputDisabled ? "INITIALIZING TAGS...": "+ ADD TAG"} disabled={inputDisabled} autocomplete="off">
+            <input class="tag-input" type="text" on:focus|once={() => openDrawer = true} on:input={handleInput} bind:value={inputValue} placeholder={inputDisabled ? "INITIALIZING TAGS...": "+ ADD TAG"} disabled={inputDisabled} autocomplete="off">
         </form>
     </div>
 
     {#if openDrawer}
-        <div class="current-tags">
-            <p class="text">Select a tag(s):</p>
-            <div class="tags">
-                {#each displayOptions as tag}
-                    <div class="tag-selection" on:click={() => {inputValue = tag; updateDisplayOptions(); handleAddTag();}}>{tag}</div> <!-- Extremely scuffed solution but werks -->
-                {/each}
-            </div>
+    <div class="hcontainer">
+        <p class="text">Select a tag(s):</p>
+        <div class="hcontainer">
+            {#each displayOptions as tag}
+            <div class="border-blue-600 tag-selection hover:border-green-600" on:click={() => {inputValue = tag; updateDisplayOptions(); handleAddTag();}}>{tag}</div> <!-- Extremely scuffed solution but werks -->
+            {/each}
         </div>
+    </div>
     {/if}
 </div>
 
 <style>
-
-    .current-tags {
-        @apply w-full;
-    }
-    .container {
-        @apply flex;
-        @apply gap-2;
-        @apply flex-col;
-        max-width: 554px; /* Shitty fix but werks */
-    }
-
-    input {
-        @apply w-full;
-    }
-
-    .tag-selection {
-        @apply px-2;
-        @apply border-green-400;
-        @apply border-2;
-        @apply rounded-lg;
-        @apply text-green-400;
-        @apply cursor-pointer;
-    }
-
-    .tag:hover, .tag-selection:hover {
-        @apply border-red-400;
-        @apply text-red-400;
-        @apply cursor-pointer;
-    }
-
-    .tag-container {
-        @apply flex;
-        @apply gap-2;
-        @apply flex-row;
+    .bad-fix {
+        width: 495px;
     }
 
 </style>

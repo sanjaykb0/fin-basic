@@ -10,12 +10,8 @@
   import Form from "../components/Form.svelte";
   import Tags from "../components/Tags.svelte";
 
-
   const app = initializeApp(cfg);
   const db = getFirestore(app);
-
-
-
   let testTags = [];
 
   (async () => {
@@ -30,19 +26,6 @@
       return obj.tag;
     })
   });
-
-  // Read Data from FB.
-
-  // const getData = async () => {
-  //   const querySnapshot = await getDocs(collection(db, "todos"));
-  //   let res = [];
-  //   querySnapshot.forEach(doc => {
-  //     res.push(doc.data());
-  //   })
-  //   return res;
-  // }
-
-  // Add Data to FB.
 
   const addData = async (tags, form) => {
     try {
@@ -77,46 +60,20 @@
   };
 </script>
 
-<!-- <header>
-  <div class="container">
-    <div class="title"><b>finbasic</b> v1.0</div>
-  </div>
-  <hr />
-</header> -->
-
-<main>
-  <Form on:message={() => (reset = false)} {reset} />
-  <Tags reset={reset} testTags={testTags}/>
-  <button on:click={handleSubmit} class="submit-cta">Submit</button>
-</main>
+<div class="wrapper">
+    <main class="vcontainer">
+        <Form on:message={() => (reset = false)} {reset} />
+        <Tags reset={reset} testTags={testTags}/>
+        <button on:click={handleSubmit} class="submit-cta">Submit</button>
+    </main>
+</div>
 
 <style>
-  .container {
-    @apply flex;
-    @apply justify-between;
-    @apply px-2;
-    @apply max-w-screen-xl;
-  }
-
-  nav ul {
-    @apply flex;
-    @apply gap-2;
-  }
-  .title {
-    @apply text-5xl;
-  }
-
   .submit-cta {
-    @apply border-red-600;
+    @apply px-3;
+    @apply border-black;
     @apply border-2;
     @apply rounded-sm;
-    @apply px-4;
-  }
-
-  main {
-    @apply flex;
-    @apply flex-col;
-    @apply items-center;
-    @apply gap-2;
+    @apply text-xl;
   }
 </style>

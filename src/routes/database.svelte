@@ -1,5 +1,6 @@
 <script>
     import cfg from "./firebaseConfig";
+    import Archives from "../components/Archives.svelte";
     import { initializeApp } from "firebase/app";
     import { collection, orderBy, getDocs, query, getFirestore, onSnapshot } from "firebase/firestore";
     const app = initializeApp(cfg);
@@ -14,11 +15,8 @@
     $: tag = "";
     // @ts-ignore
     $: displayData = [];
-
     // @ts-ignore
-    const handleInput = (i) => {
-        filterDataByTag(i);
-    }
+    let timestampData = [];
 
     const updateAggregateSum = () => {
         try {
@@ -33,30 +31,33 @@
     const getData = async () => {
         // @ts-ignore
         let res = [];
+        let months = new Set();
         try {
             const col= collection(db, "records")
             const querySnapshot = await getDocs(query(col, orderBy("dateCreated", "desc")));
             querySnapshot.forEach(doc => {
                 res.push(doc.data());
+                let month = new Date(doc.data().dateCreated.seconds  * 1000).getMonth();
+                months.add(month)
             })
+
+            months.forEach(m => timestampData.push(m))
+
            // @ts-ignore
-            return Promise.resolve(res);
+            return Promise.resolve(res)
+            .then(t => Promise.resolve(t))
+            .then(t => {
+                data = t;
+                displayData = data;
+                aggregateSum = displayData.reduce((total, dataObject) => {
+                    return total + dataObject.amount;
+                }, 0);
+                return Promise.resolve();
+            })
         } catch (e) {
             return Promise.reject("Cannot access data!");
         }
     }
-
-    // @ts-ignore
-    let tmp = getData().then(t => {
-        return Promise.resolve(t);
-    }).then(t => {
-        data = t;
-        displayData = data;
-        aggregateSum = displayData.reduce((total, dataObject) => {
-            return total + dataObject.amount;
-        }, 0);
-        return;
-    });
 
     // @ts-ignore
     const filterDataByTag = tag => {
@@ -76,55 +77,45 @@
 </script>
 
 <main>
-   {#await tmp}
+   {#await getData()}
     <div class="text-3xl">Loading data...</div>
    {:then}
-    <div class="grid-container">
+    <div class="grid grid-cols-5 w-full px-8">
         <div class="container col-start-1 col-span-2">
             {#each displayData as dataObject}
-            <div class="amount">{dataObject.amount.toLocaleString('en-US')}</div>
+                <div class="amount">{dataObject.amount.toLocaleString('en-US')}</div>
                 <div class="expenseData">
                     <div class="title">{dataObject.title}</div>
                     {#each dataObject.tags as tag}
-                    <div class="tag">{tag}</div>
+                    <div class="border-green-600 tag-selection">{tag}</div>
                     {/each}
                 </div>
-                <hr>
+                <br><hr>
             {/each}
         </div>
-        <div class="container items-end col-start-3 col-span-4 fixed max-w-fit justify-self-end">
+        <div class="container items-end fixed max-w-fit justify-self-end">
             <div class="text-5xl">Total: {aggregateSum.toLocaleString('en-US')}</div>
-            <input type="text" placeholder="SORT BY TAG"  bind:value={inputValue} on:input={() => handleInput(inputValue.toLowerCase())}>
+            <input type="text" placeholder="SORT BY TAG"  bind:value={inputValue} on:input={() => filterDataByTag(inputValue.toLowerCase())}>
+            <Archives months={
+                // @ts-ignore
+                timestampData
+                }/>
+    
         </div>
     </div>
-    {/await}
+   {/await}
 </main>
+
 <style>
-    .grid-container {
-        @apply grid;
-        @apply grid-cols-5;
-        @apply max-w-screen-lg;
-        min-width: 1024px;
-    }
-    .container {
-        @apply flex;
-        @apply flex-col;
-        @apply gap-2;
+    .amount {
+        @apply text-xl;
+        @apply font-bold;
     }
 
     .expenseData {
+        @apply text-lg; 
         @apply flex;
-        @apply gap-2;
-    }
-
-    .amount {
-        @apply text-4xl;
-    }
-
-
-    .info {
-        @apply flex;
-        @apply gap-2;
+        @apply flex-col;
     }
 </style>
 
