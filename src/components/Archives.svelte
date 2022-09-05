@@ -1,5 +1,6 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { enableNetwork } from "firebase/firestore";
+    import { createEventDispatcher, onMount } from "svelte";
     const dispatch = createEventDispatcher();
 
     // @ts-ignore
@@ -8,7 +9,10 @@
     /**
 * @type {any[]}
 */
-    export let months= [];
+
+    export let timestamps;
+    // @ts-ignore
+    let activeElement;
 
     // @ts-ignore
     const handleMonthSelection = (m, y) => {
@@ -22,20 +26,44 @@
         }
     }
 
+    onMount(() => {
+        const thisYear = new Date().getFullYear();
+        const thisMonth = new Date().getMonth();
+        handleMonthSelection(thisMonth, thisYear.toString());
+    })
 
 </script>
 
 <!-- <main> -->
     <div class="vcontainer">
-        <div class="box">
-            {#each months as month}
-                <button class="month-selection" on:click={() => handleMonthSelection(month)}>
-                    <div class="hcontainer">
-                        <div class="month">{monthKeys[month]}</div>
-                        <!-- <div class="purchase-count">{month.count}</div> -->
-                    </div>
-                </button>
+        {#each Object.entries(timestamps) as [year, months]}
+            <button on:click={() => handleMonthSelection(-1, year)} class="year-cta"  id={year}>{year}</button>
+            <div class="months-container">
+                {#each months as month}
+                    <button id ={month.toString() + year.toString()} class="month-cta" on:click={() => handleMonthSelection(month, year)}>{monthKeys[month]}</button>
+                {/each}
+            </div>
             {/each}
-        </div>
     </div>
 <!-- </main> -->
+
+<style>
+    .year-cta {
+        @apply text-2xl;
+        @apply cursor-pointer;
+    }
+
+    .month-cta {
+        @apply text-lg;
+        @apply cursor-pointer;
+    }
+    .months-container {
+        @apply flex;
+        @apply flex-col;
+        @apply gap-0;
+    }
+
+    .active {
+        @apply text-green-600;
+    }
+</style>

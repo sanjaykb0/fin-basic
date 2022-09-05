@@ -16,7 +16,9 @@
     // @ts-ignore
     $: displayData = [];
     // @ts-ignore
-    let timestampData = [];
+    let timestampData;
+    // @ts-ignore
+    let redundancyData;
 
     const updateAggregateSum = () => {
         try {
@@ -28,30 +30,69 @@
         }
     }
 
+    // @ts-ignore
+    const parseTimestamps = (timestamps) => {
+        let tmp;
+        let res = {};
+        // @ts-ignore
+        timestamps.forEach(t => {
+            tmp = new Date(t.seconds * 1000);
+            let year = tmp.getFullYear();
+            let month = tmp.getMonth();
+            // @ts-ignore
+            if (res[year] === undefined) {
+                // @ts-ignore
+                res[year] = [];
+            }
+
+            // @ts-ignore
+            res[year].push(month);
+        })
+
+        for (const year in res) {
+            // @ts-ignore
+            res[year] = [... new Set(res[year])]
+        }
+        return res;
+    }
+
     const getData = async () => {
         // @ts-ignore
+        let tsData = [];
+        // @ts-ignore
         let res = [];
-        let months = new Set();
         try {
             const col= collection(db, "records")
             const querySnapshot = await getDocs(query(col, orderBy("dateCreated", "desc")));
+           
             querySnapshot.forEach(doc => {
                 res.push(doc.data());
-                let month = new Date(doc.data().dateCreated.seconds  * 1000).getMonth();
-                months.add(month)
             })
 
-            months.forEach(m => timestampData.push(m))
 
            // @ts-ignore
+            // @ts-ignore
             return Promise.resolve(res)
-            .then(t => Promise.resolve(t))
             .then(t => {
                 data = t;
+                redundancyData = t;
+                data = redundancyData.filter(t => {
+                    let dataEntryYear = new Date(t.dateCreated.seconds * 1000).getFullYear();
+                    let currentYear = new Date().getFullYear();
+                    return dataEntryYear === currentYear; 
+                });
                 displayData = data;
                 aggregateSum = displayData.reduce((total, dataObject) => {
                     return total + dataObject.amount;
                 }, 0);
+                // @ts-ignore
+                let timestamps = [];
+                t.forEach(u => {
+                    timestamps.push(u.dateCreated);
+                })
+                // @ts-ignore
+
+                timestampData = parseTimestamps(timestamps);
                 return Promise.resolve();
             })
         } catch (e) {
@@ -61,7 +102,6 @@
 
     // @ts-ignore
     const filterDataByTag = tag => {
-        console.log(`Filtering out tags == ${tag}`)
         // @ts-ignore
         displayData = data.filter(dataObject => {
             let tmp = false;
@@ -74,6 +114,26 @@
         updateAggregateSum();
     }
 
+    // @ts-ignore
+    const handleFilterByData = e => {
+        if (e.detail.month === -1) {
+            // @ts-ignore
+            data = redundancyData.filter(obj => {
+                let tmp = new Date(obj.dateCreated.seconds * 1000).getFullYear();
+                return e.detail.year == tmp;
+            })
+            filterDataByTag('') // this is to update displayData
+        } else {
+            // @ts-ignore
+            data = redundancyData.filter(obj => {
+                let objMonth = new Date(obj.dateCreated.seconds * 1000).getMonth();
+                let objYear = new Date(obj.dateCreated.seconds * 1000).getFullYear();
+                return ( objMonth == e.detail.month && objYear == e.detail.year)
+            })
+            filterDataByTag(''); // this is to update displayTags (shitty but works)
+        }
+    }
+
 </script>
 
 <main>
@@ -81,7 +141,7 @@
     <div class="text-3xl">Loading data...</div>
    {:then}
     <div class="grid grid-cols-5 w-full px-8">
-        <div class="container col-start-1 col-span-2">
+        <div class="overflow-screen container col-start-1 col-span-2">
             {#each displayData as dataObject}
                 <div class="amount">{dataObject.amount.toLocaleString('en-US')}</div>
                 <div class="expenseData">
@@ -96,10 +156,13 @@
         <div class="container items-end fixed max-w-fit justify-self-end">
             <div class="text-5xl">Total: {aggregateSum.toLocaleString('en-US')}</div>
             <input type="text" placeholder="SORT BY TAG"  bind:value={inputValue} on:input={() => filterDataByTag(inputValue.toLowerCase())}>
-            <Archives months={
+            <Archives timestamps={
                 // @ts-ignore
                 timestampData
-                }/>
+                }
+
+            on:message={handleFilterByData}
+            />
     
         </div>
     </div>

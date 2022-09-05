@@ -28,7 +28,7 @@ main {
     @apply flex;
     @apply flex-col;
     @apply items-center;
-    @apply mt-16;
+    @apply mt-20;
 }
 
 header {
