@@ -1,21 +1,25 @@
 <script>
-    import { enableNetwork } from "firebase/firestore";
+    // @ts-nocheck
     import { createEventDispatcher, onMount } from "svelte";
     const dispatch = createEventDispatcher();
 
-    // @ts-ignore
     const monthKeys = ['JAN', 'FEB', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC'];
-    // @ts-ignore
-    /**
-* @type {any[]}
-*/
 
     export let timestamps;
-    // @ts-ignore
     let activeElement;
 
-    // @ts-ignore
     const handleMonthSelection = (m, y) => {
+        if (activeElement != undefined) {
+            activeElement.style.color = "black";
+        }
+
+        if (m === -1) {
+            activeElement = document.getElementById(y.toString());
+            activeElement.style.color = "green";
+        } else {
+            activeElement = document.getElementById(m.toString() + y.toString());
+            activeElement.style.color = "green"
+        }
         try {
             dispatch("message", {
                 month: m,
@@ -37,7 +41,7 @@
 <!-- <main> -->
     <div class="vcontainer">
         {#each Object.entries(timestamps) as [year, months]}
-            <button on:click={() => handleMonthSelection(-1, year)} class="year-cta"  id={year}>{year}</button>
+            <button on:click={() => handleMonthSelection(-1, year)} class="year-cta" id={year}>{year}</button>
             <div class="months-container">
                 {#each months as month}
                     <button id ={month.toString() + year.toString()} class="month-cta" on:click={() => handleMonthSelection(month, year)}>{monthKeys[month]}</button>

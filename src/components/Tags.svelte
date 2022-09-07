@@ -1,20 +1,15 @@
 <script>
+    // @ts-nocheck
     import { tagsData } from "../stores.js";
-    // @ts-ignore
     export let reset = false;
 
-    // @ts-ignore
     $: tags = []; // Tags that are added to the "tags" section.
-    // @ts-ignore
     $: displayOptions = [...testTags]; // Display options are the ones that show in the "select a tag" section.
-    // @ts-ignore
     $: hideOptions = []; // Hide tag option when a tag is selected.
-    // @ts-ignore;
     $: inputDisabled = testTags.length === 0 ? true : false;
 
     $: {
         if (true) {
-            // @ts-ignore
             $tagsData = tags;
         }
     }
@@ -28,14 +23,11 @@
         }
     }
 
-    // THIS needs to be replaced with a method that retrieves data from firebase.
-    //@ts-ignore
     export let testTags = []; // Test tags that are already there; will be replaced by tags stored in some database.
     let openDrawer = false; // Decides if the "select a tag" section is shown or hidden.
     export let inputValue = ""; // Sets the input value to be reset after use
 
     const updateDisplayOptions = () => {
-        //@ts-ignore
         displayOptions = testTags.filter(t => {
             if (t.match(inputValue.toLowerCase()) && !hideOptions.find(hiddenOption => hiddenOption === t)) {
                 return true;
@@ -44,12 +36,11 @@
         })
     }
 
-    // @ts-ignore
     const handleInput = e => {
         inputValue = e.target.value;
         updateDisplayOptions();
     }
-    // @ts-ignore
+
     const handleAddTag = e => { // Add Tag
         let tagToBeAdded = displayOptions[0];
         tagToBeAdded === undefined ? "" : tags = [...tags, tagToBeAdded];
@@ -58,7 +49,6 @@
         updateDisplayOptions();
     }
 
-    // @ts-ignore
     const removeTag = str => { // Remove Tag 
         tags = tags.filter(t => t != str);
         hideOptions = hideOptions.filter(t => t != str);

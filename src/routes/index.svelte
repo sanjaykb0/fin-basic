@@ -2,16 +2,13 @@
 // @ts-nocheck
 
   import { tagsData, formData } from "../stores.js";
-  import { initializeApp } from "firebase/app";
-  import cfg from "./firebaseConfig"
   import { getFirestore } from "firebase/firestore";
   import { collection, getDocs, Timestamp } from "firebase/firestore";
   import { addDoc } from "firebase/firestore";
   import Form from "../components/Form.svelte";
   import Tags from "../components/Tags.svelte";
 
-  const app = initializeApp(cfg);
-  const db = getFirestore(app);
+  const db = getFirestore();
   let testTags = [];
 
   (async () => {
@@ -42,7 +39,6 @@
     }
   }
 
-  //@ts-ignore
   let tags, form;
   let reset = false;
 
@@ -50,7 +46,6 @@
   formData.subscribe((t) => (form = t));
 
   const handleSubmit = () => {
-    //@ts-ignore
     if (!form[0] || !form[1] || tags.length === 0) {
       alert("Error uploading data. Please recheck format!");
       return;

@@ -1,13 +1,13 @@
 <script>
+    //@ts-nocheck
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
     import { formData } from "../stores.js";
     export let reset = false;
-    // @ts-ignore
     let title, qty;
+
     $: {
         if (true) {
-            // @ts-ignore
             $formData = [title, qty];
         }
     }
