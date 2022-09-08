@@ -21,7 +21,6 @@
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log(user.uid);
                 uid.set(user.uid);
                 isLoggedIn.update(() => true)
                 goto('/');

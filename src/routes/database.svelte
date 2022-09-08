@@ -2,7 +2,6 @@
     //@ts-nocheck
     import Archives from "../components/Archives.svelte";
     import { collection, orderBy, getDocs, query, getFirestore } from "firebase/firestore";
-    import { getStorage, ref, getMetadata, listAll } from "firebase/storage";
     import { uid } from "../stores"
 
     const db = getFirestore();
