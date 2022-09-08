@@ -2,9 +2,12 @@
     //@ts-nocheck
     import Archives from "../components/Archives.svelte";
     import { collection, orderBy, getDocs, query, getFirestore } from "firebase/firestore";
-    // import { getStorage, ref, getMetadata, listAll } from "firebase/storage";
+    import { getStorage, ref, getMetadata, listAll } from "firebase/storage";
+    import { uid } from "../stores"
 
     const db = getFirestore();
+    let user;
+    uid.subscribe(t => user = t);
 
     // Test
 
@@ -49,10 +52,9 @@
     }
 
     const getData = async () => {
-        let tsData = [];
         let res = [];
         try {
-            const col= collection(db, "records")
+            const col= collection(db, `users/${user}/records`)
             const querySnapshot = await getDocs(query(col, orderBy("dateCreated", "desc")));
            
             querySnapshot.forEach(doc => {
@@ -127,9 +129,11 @@
                 <div class="amount">{dataObject.amount.toLocaleString('en-US')}</div>
                 <div class="expenseData">
                     <div class="text-xl">{dataObject.title}</div>
-                    {#each dataObject.tags as tag}
-                    <div class="border-green-600 tag-selection">{tag}</div>
-                    {/each}
+                    <div class="flex gap-2">
+                        {#each dataObject.tags as tag}
+                        <div class="border-green-600 tag-selection">{tag}</div>
+                        {/each}
+                    </div>
                 </div>
                 <br><hr>
             {/each}

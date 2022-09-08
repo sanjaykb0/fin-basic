@@ -1,14 +1,16 @@
 <script>
 // @ts-nocheck
 
-  import { tagsData, formData } from "../stores.js";
-  import { getFirestore } from "firebase/firestore";
+  import { tagsData, formData, uid } from "../stores.js";
+  import { doc, getFirestore } from "firebase/firestore";
   import { collection, getDocs, Timestamp } from "firebase/firestore";
   import { addDoc } from "firebase/firestore";
   import Form from "../components/Form.svelte";
   import Tags from "../components/Tags.svelte";
+  import { onMount } from "svelte";
 
   const db = getFirestore();
+
   let testTags = [];
 
   (async () => {
@@ -26,24 +28,26 @@
 
   const addData = async (tags, form) => {
     try {
-      const docRef = await addDoc(collection(db, "records"), {
+      await addDoc(collection(db, `users/${user}/records`), {
         title : form[0],
         amount : Number(form[1]),
         tags : tags,
         dateCreated : Timestamp.now(),
       });
+
       console.log("Successfully pushed data.")
       return Promise.resolve(1);
     } catch (e) {
-      return e;
+      console.log(e)
     }
   }
 
-  let tags, form;
+  let tags, form, user;
   let reset = false;
 
   tagsData.subscribe((t) => (tags = t));
   formData.subscribe((t) => (form = t));
+  uid.subscribe(t => user = t)
 
   const handleSubmit = () => {
     if (!form[0] || !form[1] || tags.length === 0) {

@@ -18,5 +18,7 @@
 </main>
 
 <style>
-
+    button {
+        @apply underline;
+    }
 </style>
