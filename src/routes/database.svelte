@@ -1,11 +1,12 @@
 <script>
     //@ts-nocheck
     import Archives from "../components/Archives.svelte";
-    import { collection, orderBy, getDocs, query, getFirestore, onSnapshot } from "firebase/firestore";
+    import { collection, orderBy, getDocs, query, getFirestore } from "firebase/firestore";
+    // import { getStorage, ref, getMetadata, listAll } from "firebase/storage";
 
     const db = getFirestore();
 
-
+    // Test
 
     $: inputValue = "";
     $: aggregateSum = 0;

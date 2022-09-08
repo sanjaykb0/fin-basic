@@ -4,6 +4,7 @@
     import { getAuth, onAuthStateChanged} from "firebase/auth"
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
+    import { isLoggedIn } from "../stores";
 
     const app = initializeApp(cfg);
 
@@ -14,8 +15,10 @@
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                alert('allah')
+                isLoggedIn.update(() => true);
+                goto('/');
             } else {
+                isLoggedIn.update(() => false);
                 goto('/login');
             }
         })

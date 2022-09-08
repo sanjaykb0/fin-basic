@@ -56,10 +56,6 @@ header {
     @apply items-center;
 }
 
-input {
-    @apply w-full;
-}
-
 .form-input {
     @apply flex;
     @apply text-4xl;
@@ -73,6 +69,7 @@ input {
     @apply text-xl;
     @apply p-4;
     @apply outline-none;
+    @apply w-full;
 }
 
 .tag-selection {
